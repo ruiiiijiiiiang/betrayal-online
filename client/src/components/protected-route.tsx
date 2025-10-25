@@ -1,10 +1,17 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { useTimeoutFn } from 'react-use';
 import { useSocketContext } from './socket';
 
 export const ProtectedRoute = () => {
     const { isAuthenticated, isLoading } = useAuth0()
     const { connected } = useSocketContext()
+    const navigate = useNavigate();
+    useTimeoutFn(() => {
+        if (!connected || !isAuthenticated) {
+            navigate('/');
+        }
+    }, 2000);
 
     if (isLoading) {
         return (
@@ -12,10 +19,6 @@ export const ProtectedRoute = () => {
                 <div className="text-yellow-900 text-2xl font-tomarik-brush">Loading...</div>
             </div>
         )
-    }
-
-    if (!isAuthenticated || !connected) {
-        return <Navigate to="/" replace />
     }
 
     return <Outlet />
