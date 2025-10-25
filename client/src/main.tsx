@@ -6,7 +6,7 @@ import { Auth0Provider } from '@auth0/auth0-react'
 import SocketProvider from './components/socket'
 
 import BetrayalCover from './cover'
-import MatchesList from './view/matches'
+import GamesList from './view/games'
 import Match from './view/match'
 import NewMatch from './view/new-match'
 import { ProtectedRoute } from './components/protected-route'
@@ -37,7 +37,7 @@ createRoot(document.getElementById('root')!).render(
             <Routes>
               <Route path="/" element={<BetrayalCover />} />
               <Route element={<ProtectedRoute />}>
-                <Route path="/matches" element={<MatchesList />} />
+                <Route path="/matches" element={<GamesList />} />
                 {/* <Route path="/matches/new" element={<NewMatch />} /> */}
                 {/* <Route path="/matches/:matchID" element={<Match />} /> */}
               </Route>

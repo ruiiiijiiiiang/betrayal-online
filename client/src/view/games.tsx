@@ -4,7 +4,7 @@ import { Button } from '../components/button'
 import { CoverContainer } from '../components/cover-container'
 
 
-export default function MatchesList() {
+export default function GamesList() {
     const navigate = useNavigate()
     const [matches, setMatches] = useState([])
 
