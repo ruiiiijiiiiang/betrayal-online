@@ -1,11 +1,11 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useTimeoutFn } from 'react-use';
-import { useSocketContext } from './socket';
+import { useSocket } from './socket';
 
 export const ProtectedRoute = () => {
     const { isAuthenticated, isLoading } = useAuth0()
-    const { connected } = useSocketContext()
+    const { connected } = useSocket()
     const navigate = useNavigate();
     useTimeoutFn(() => {
         if (!connected || !isAuthenticated) {

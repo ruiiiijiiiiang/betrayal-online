@@ -136,7 +136,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>
 }
 
-export function useSocketContext() {
+export function useSocket() {
     const ctx = useContext(SocketContext)
     if (!ctx) throw new Error('useSocketContext must be used within a <SocketProvider>')
     return ctx

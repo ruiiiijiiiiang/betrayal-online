@@ -2,7 +2,7 @@ import { LogoutOptions, useAuth0, User } from '@auth0/auth0-react';
 import { Button } from './components/button';
 import { NavigateFunction, useNavigate } from 'react-router-dom'
 import { CoverContainer } from './components/cover-container';
-import { useSocketContext } from './components/socket';
+import { useSocket } from './components/socket';
 import clsx from 'clsx';
 
 const BetrayalCover = () => {
@@ -52,7 +52,7 @@ const AuthenticatedButtons = (
         user: User, logout: (options?: LogoutOptions) => Promise<void>, navigate: NavigateFunction
     }
 ) => {
-    const { connected } = useSocketContext();
+    const { connected } = useSocket();
 
     const onCreateNewGame = () => {
         navigate('/matches/new');

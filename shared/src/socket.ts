@@ -2,7 +2,11 @@ import { Account } from "./account";
 import { Game } from "./game";
 
 export interface ServerToClientEvents { }
-export interface ClientToServerEvents extends ListGames, CreateGame, JoinGame { }
+export interface ClientToServerEvents {
+    "list-games": ListGames;
+    "create-game": CreateGame;
+    "join-game": JoinGame;
+}
 export interface InterServerEvents { }
 export interface SocketData { account: Account }
 
