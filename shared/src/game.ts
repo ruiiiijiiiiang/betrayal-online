@@ -1,9 +1,13 @@
+import { DateTime } from "luxon";
+
 export type Game = {
     id: string;
     isPasswordProtected?: boolean;
     status: GameStatus;
     players: Record<string, PlayerState>;
+    playersOrder: Array<string>;
     state: GameState;
+    createdAt: DateTime;
 }
 
 export enum GameStatus {

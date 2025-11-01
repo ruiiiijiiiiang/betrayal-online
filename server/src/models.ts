@@ -24,8 +24,10 @@ export type MGame = Omit<Game, 'id' | 'isPasswordProtected'> & Document & {
 const gameSchema = new Schema<MGame>({
     password: { type: String },
     status: { type: String, required: true },
-    players: { type: Schema.Types.Mixed },
-    state: { type: Schema.Types.Mixed },
+    players: { type: Schema.Types.Mixed, required: true },
+    playersOrder: { type: [String], required: true },
+    state: { type: Schema.Types.Mixed, required: true },
+    createdAt: { type: Schema.Types.Date, required: true },
 });
 
 export const GameModel: Model<MGame> = mongoose.model<MGame>('Game', gameSchema);

@@ -1,4 +1,5 @@
 import { type Server, Socket } from "socket.io";
+import { DateTime } from "luxon";
 import { GameStatus, ListGames, CreateGame, JoinGame, Game } from "@betrayal/shared";
 import { GameModel } from "./models";
 
@@ -19,13 +20,17 @@ export default (io: Server, socket: Socket) => {
                 isReady: false
             }
         }
+        const playersOrder = [socket.data.account.sub];
         const state = {}
+        const createdAt = DateTime.now();
 
         const game = new GameModel({
             password: data.password,
             status: GameStatus.WAITING,
             players,
-            gameState: state,
+            playersOrder,
+            state,
+            createdAt,
         });
         const createdGame = await game.save()
 
@@ -34,7 +39,9 @@ export default (io: Server, socket: Socket) => {
             isPasswordProtected: createdGame.password !== undefined,
             status: createdGame.status,
             players,
+            playersOrder,
             state,
+            createdAt,
         }
         cb(response);
     }
