@@ -52,7 +52,7 @@ const AuthenticatedButtons = (
         user: User, logout: (options?: LogoutOptions) => Promise<void>, navigate: NavigateFunction
     }
 ) => {
-    const { connected } = useSocket();
+    const { isConnected: connected } = useSocket();
 
     const onCreateNewGame = () => {
         navigate('/matches/new');

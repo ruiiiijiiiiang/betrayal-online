@@ -5,8 +5,8 @@ import { useAuth0 } from '@auth0/auth0-react'
 
 type SocketContextValue = {
     socket: Socket<ServerToClientEvents, ClientToServerEvents> | null
-    connected: boolean
-    connecting: boolean
+    isConnected: boolean
+    isConnecting: boolean
     error: any | null
     connect: () => Promise<Socket<ServerToClientEvents, ClientToServerEvents> | null>
     disconnect: () => void
@@ -18,8 +18,8 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     const { isAuthenticated, getAccessTokenSilently } = useAuth0()
 
     const socketRef = useRef<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null)
-    const [connected, setConnected] = useState(false)
-    const [connecting, setConnecting] = useState(false)
+    const [isConnected, setIsConnected] = useState(false)
+    const [isConnecting, setIsConnecting] = useState(false)
     const [error, setError] = useState<any | null>(null)
     const [accessToken, setAccessToken] = useState<string | null>(null)
 
@@ -39,7 +39,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     const connect = useCallback(async () => {
         if (socketRef.current && socketRef.current.connected) return socketRef.current
 
-        setConnecting(true)
+        setIsConnecting(true)
         setError(null)
 
         try {
@@ -59,23 +59,23 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
             socketRef.current = socket
 
             socket.on('connect', () => {
-                setConnected(true)
-                setConnecting(false)
+                setIsConnected(true)
+                setIsConnecting(false)
             })
 
             socket.on('disconnect', () => {
-                setConnected(false)
+                setIsConnected(false)
             })
 
             socket.on('connect_error', (err) => {
                 setError(err)
-                setConnecting(false)
+                setIsConnecting(false)
             })
 
             return socket
         } catch (err) {
             setError(err)
-            setConnecting(false)
+            setIsConnecting(false)
             return null
         }
     }, [accessToken, fetchToken, isAuthenticated, url])
@@ -89,8 +89,8 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
             }
             socketRef.current = null
         }
-        setConnected(false)
-        setConnecting(false)
+        setIsConnected(false)
+        setIsConnecting(false)
     }, [])
 
     // Auto connect when authenticated
@@ -126,12 +126,12 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 
     const value = useMemo(() => ({
         socket: socketRef.current,
-        connected,
-        connecting,
+        isConnected,
+        isConnecting,
         error,
         connect,
         disconnect,
-    }), [connected, connecting, error, connect, disconnect])
+    }), [isConnected, isConnecting, error, connect, disconnect])
 
     return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>
 }
