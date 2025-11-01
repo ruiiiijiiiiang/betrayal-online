@@ -15,8 +15,9 @@ export default function NewGame() {
 
     const handleCreateGame = async () => {
         socket?.emit('create-game', { password }, (response: any) => {
-            const { id } = response;
+            const { id, ...game } = response;
             navigate(`/games/${id}`);
+            console.log(game)
         });
     };
 
@@ -60,10 +61,9 @@ export default function NewGame() {
                 <div className='flex gap-3 pt-4'>
                     <Button
                         onClick={handleCreateGame}
-                        disabled={isCreating}
                         className='flex-1 bg-yellow-700 text-white font-tomarik-brush text-lg px-6 py-3 hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
-                        {isCreating ? 'Creating...' : 'Create Game'}
+                        Create Game
                     </Button>
                 </div>
             </div>
