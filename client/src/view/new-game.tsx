@@ -11,30 +11,13 @@ export default function NewGame() {
     const { socket } = useSocket();
 
     const [isPrivate, setIsPrivate] = useState<boolean>(true);
-    const [password, setPassword] = useState<string>('');
-    const [isCreating, setIsCreating] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
+    const [password, setPassword] = useState<string>();
 
     const handleCreateGame = async () => {
-        setIsCreating(true);
-        setError(null);
-
-        try {
-            socket?.emit('create-game', { password }, (response: any) => {
-                if (response.error) {
-                    setError(response.error);
-                    setIsCreating(false);
-                } else {
-                    const { id } = response;
-                    navigate(`/games/${id}`);
-                }
-            });
-        } catch (err: any) {
-            console.error('Failed to create match:', err);
-            setError(err?.message ?? 'Failed to create match');
-        } finally {
-            setIsCreating(false);
-        }
+        socket?.emit('create-game', { password }, (response: any) => {
+            const { id } = response;
+            navigate(`/games/${id}`);
+        });
     };
 
     return (
@@ -43,12 +26,6 @@ export default function NewGame() {
                 <div className='flex items-center justify-between'>
                     <h1 className='text-3xl font-tomarik-brush text-red-900/85'>Create New Game</h1>
                 </div>
-
-                {error && (
-                    <div className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded'>
-                        {error}
-                    </div>
-                )}
 
                 <div className='space-y-5'>
                     {/* Game Password */}
