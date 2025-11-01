@@ -20,7 +20,7 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"npm run watch --prefix shared\" \"npm run dev --prefix server\" \"npm run dev --prefix client\""
+    "dev": "concurrently \"npm run watch --prefix shared\" \"npm run dev --prefix client\" \"npm run dev --prefix server\""
   },
   "dependencies": {
     "dotenv": "^17.2.3",
