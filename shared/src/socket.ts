@@ -13,7 +13,7 @@ export interface SocketData { account: Account }
 export type SocketEventFn<Data, CallbackFn> = (data: Data, callback: CallbackFn) => void;
 
 // List Games
-export type ListGames = SocketEventFn<never, (data: { games: Array<Game> }) => void>;
+export type ListGames = SocketEventFn<any, (data: { games: Array<Game> }) => void>;
 
 // Create Game
 export interface CreateGameRequest { password?: string; }

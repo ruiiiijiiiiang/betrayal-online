@@ -3,7 +3,7 @@ import { GameStatus, ListGames, CreateGame, JoinGame, Game } from "@betrayal/sha
 import { GameModel } from "./models";
 
 export default (io: Server, socket: Socket) => {
-    const listGames: ListGames = async (_data, cb) => {
+    const listGames: ListGames = async (_, cb) => {
         const mgames = await GameModel.find().select('-password');
         const games: Array<Game> = mgames.map(mgame => ({
             ...mgame.toObject(),
