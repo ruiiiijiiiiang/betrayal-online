@@ -8,7 +8,7 @@ import SocketProvider from './components/socket'
 import BetrayalCover from './cover'
 import GamesList from './view/games'
 import Match from './view/match'
-import NewMatch from './view/new-match'
+import NewMatch from './view/new-game'
 import { ProtectedRoute } from './components/protected-route'
 
 import './index.css'
