@@ -62,7 +62,7 @@ export function Switch({
         // Outline and background color in forced-colors mode so switch is still visible
         'forced-colors:outline forced-colors:[--switch-bg:Highlight] dark:forced-colors:[--switch-bg:Highlight]',
         // Unchecked
-        'bg-zinc-200 ring-1 ring-inset ring-black/5 dark:bg-white/5 dark:ring-white/15',
+        'bg-gray-100 ring-1 ring-inset ring-black/5 dark:bg-white/5 dark:ring-white/15',
         // Checked
         'data-[checked]:bg-[var(--switch-bg)] data-[checked]:ring-[var(--switch-bg-ring)] dark:data-[checked]:bg-[var(--switch-bg)] dark:data-[checked]:ring-[var(--switch-bg-ring)]',
         // Focus
@@ -74,8 +74,8 @@ export function Switch({
         'data-[disabled]:bg-zinc-200 data-[disabled]:data-[checked]:bg-zinc-200 data-[disabled]:opacity-50 data-[disabled]:data-[checked]:ring-black/5',
         'dark:data-[disabled]:bg-white/15 dark:data-[disabled]:data-[checked]:bg-white/15 dark:data-[disabled]:data-[checked]:ring-white/15',
         // Color
-        '[--switch-bg-ring:theme(colors.orange.600/90%)] [--switch-bg:theme(colors.orange.600)] dark:[--switch-bg-ring:transparent]',
-        '[--switch:white] [--switch-ring:theme(colors.orange.600/90%)] [--switch-shadow:theme(colors.orange.900/20%)]',
+        '[--switch-bg-ring:theme(colors.yellow.600/90%)] [--switch-bg:theme(colors.yellow.600)] dark:[--switch-bg-ring:transparent]',
+        '[--switch:white] [--switch-ring:theme(colors.yellow.600/90%)] [--switch-shadow:theme(colors.orange.900/20%)]',
       )}
     >
       <span
@@ -88,7 +88,7 @@ export function Switch({
           // Invisible border so the switch is still visible in forced-colors mode
           'border border-transparent',
           // Unchecked
-          'bg-white shadow ring-1 ring-black/5',
+          'bg-[var(--switch)] shadow ring-1 ring-black/5',
           // Checked
           'group-data-[checked]:bg-[--switch] group-data-[checked]:shadow-[--switch-shadow] group-data-[checked]:ring-[--switch-ring]',
           'group-data-[checked]:translate-x-4 sm:group-data-[checked]:translate-x-5.5',

@@ -4,12 +4,16 @@ import { Button } from '../components/button';
 import { CoverContainer } from '../components/cover-container';
 import clsx from 'clsx';
 import { Switch } from '../components/switch';
+import { useSocket } from '../components/socket';
 
 
-export default function NewMatch() {
+export default function NewGame() {
     const navigate = useNavigate();
+    const { socket } = useSocket();
+
     const [numPlayers, setNumPlayers] = useState<number>(6);
     const [isPrivate, setIsPrivate] = useState<boolean>(true);
+    const [password, setPassword] = useState<string>('');
     const [isCreating, setIsCreating] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -23,18 +27,15 @@ export default function NewMatch() {
         setError(null);
 
         try {
-            const setupData: any = {
-                numPlayers,
-            };
-
-            // Note: boardgame.io doesn't have built-in private match functionality
-            // You may need to implement this on your server side
-            if (isPrivate) {
-                setupData.unlisted = true; // This is a custom property you'd handle server-side
-            }
-
-            const matchID = 0
-            navigate(`/matches/${matchID}`);
+            socket?.emit('create-game', { password }, (response: any) => {
+                if (response.error) {
+                    setError(response.error);
+                    setIsCreating(false);
+                } else {
+                    const { gameId } = response;
+                    navigate(`/matches/${gameId}`);
+                }
+            });
         } catch (err: any) {
             console.error('Failed to create match:', err);
             setError(err?.message ?? 'Failed to create match');
@@ -47,7 +48,7 @@ export default function NewMatch() {
         <CoverContainer>
             <div className='bg-red-800/10 p-6 space-y-6 my-12 max-w-lg mx-auto'>
                 <div className='flex items-center justify-between'>
-                    <h1 className='text-3xl font-tomarik-brush text-red-900/85'>Create New Match</h1>
+                    <h1 className='text-3xl font-tomarik-brush text-red-900/85'>Create New Game</h1>
                 </div>
 
                 {error && (
@@ -84,24 +85,31 @@ export default function NewMatch() {
                         </p>
                     </div>
 
-                    {/* Private Match */}
+                    {/* Game Password */}
                     <div className='space-y-2'>
-                        <div className='flex items-center gap-3'>
+                        <div className='flex items-center justify-between'>
+                            <label className='block text-amber-900 font-medium'>Password Protected Game</label>
                             <Switch
-                                id='isPrivate'
                                 checked={isPrivate}
-                                // disabled={true}
-                                onChange={(checked) => setIsPrivate(checked)}
+                                onChange={(v: boolean) => setIsPrivate(v)}
                             />
-                            <div>
-                                <label htmlFor='isPrivate' className='text-amber-900 font-medium'>
-                                    Private Match
-                                </label>
+                        </div>
+
+                        {isPrivate && (
+                            <div className='space-y-2'>
+                                <input
+                                    id='gamePassword'
+                                    type='password'
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder='Password to join this game'
+                                    className='w-full rounded border px-3 py-2'
+                                />
                                 <p className='text-sm text-amber-800'>
-                                    Private matches won't appear in the public match list
+                                    Set a password so only players with the password can join.
                                 </p>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </div>
 

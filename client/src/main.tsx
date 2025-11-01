@@ -7,8 +7,8 @@ import SocketProvider from './components/socket'
 
 import BetrayalCover from './cover'
 import GamesList from './view/games'
-import Match from './view/match'
-import NewMatch from './view/new-game'
+import Game from './view/game'
+import NewGame from './view/new-game'
 import { ProtectedRoute } from './components/protected-route'
 
 import './index.css'
@@ -38,8 +38,8 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/" element={<BetrayalCover />} />
               <Route element={<ProtectedRoute />}>
                 <Route path="/matches" element={<GamesList />} />
-                {/* <Route path="/matches/new" element={<NewMatch />} /> */}
-                {/* <Route path="/matches/:matchID" element={<Match />} /> */}
+                <Route path="/games/new" element={<NewGame />} />
+                <Route path="/games/:gameId" element={<Game />} />
               </Route>
             </Routes>
           </Suspense>

@@ -3,45 +3,35 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react';
 import { Button } from '../components/button'
 import { CoverContainer } from '../components/cover-container'
-import { useAuthContext } from '../contexts/auth-context';
 
-export default function Match() {
+export default function Game() {
     const { user } = useAuth0()
-    const { userMetadata, getMetadata } = useAuthContext()
-    const { matchID } = useParams<{ matchID: string }>()
-    const [match, setMatch] = useState(null)
+    const { gameId } = useParams<{ gameId: string }>()
+    const [game, setGame] = useState(null)
 
-    if (!matchID) return
+    if (!gameId) return
     if (!user) return
 
     const load = async () => {
         const match = null
-        setMatch(match);
+        setGame(match);
     }
 
-    useEffect(() => {
-        load()
-        const interval = setInterval(load, 5000);
-        return () => clearInterval(interval);
-    }, [matchID, userMetadata]);
-
-    const joinedMatch = useMemo(() => {
-        return !!getMetadata(matchID)
-    }, [userMetadata, matchID]);
+    const joinedMatch = false
 
     return (
         <CoverContainer>
             <div className='bg-red-800/10 p-6 space-y-5 my-12'>
                 <h1 className='text-3xl font-tomarik-brush text-red-900/85 mb-6'>Join Match</h1>
 
-                {!match && (
+                {!game && (
                     <div className='text-amber-900'>Match not found.</div>
                 )}
 
-                {match && (
+                {game && (
                     <div className='space-y-4'>
                         <div>
-                            <div className='text-amber-900 font-medium'>Match {match}</div>
+                            <div className='text-amber-900 font-medium'>Match {game}</div>
                             <div className='text-amber-800 text-sm'>0/0 players</div>
                         </div>
 
@@ -53,8 +43,8 @@ export default function Match() {
                         </div>
 
                         <div className='pt-2'>
-                            {!joinedMatch && <NotJoinedMatchButtons matchID={matchID} />}
-                            {joinedMatch && <JoinedMatchButtons matchID={matchID} isFull={false} />}
+                            {!joinedMatch && <NotJoinedMatchButtons matchID={gameId} />}
+                            {joinedMatch && <JoinedMatchButtons matchID={gameId} isFull={false} />}
                         </div>
                     </div>
                 )}
@@ -65,7 +55,6 @@ export default function Match() {
 
 const NotJoinedMatchButtons = ({ matchID }: { matchID: string }) => {
     const { user } = useAuth0();
-    const { updateMetadata } = useAuthContext()
 
     if (!user) return null;
 
@@ -86,14 +75,10 @@ const NotJoinedMatchButtons = ({ matchID }: { matchID: string }) => {
 
 const JoinedMatchButtons = ({ matchID, isFull }: { matchID: string; isFull: boolean }) => {
     const navigate = useNavigate();
-    const { userMetadata, deleteMetadata } = useAuthContext()
     const onGoToBoard = () => {
         navigate(`/matches/${matchID}/board`);
     }
     const onLeaveMatch = async () => {
-        const playerID = userMetadata[matchID]?.playerID;
-        const credentials = userMetadata[matchID]?.credentials;
-
         navigate(`/matches/`);
     }
 
