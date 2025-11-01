@@ -2,8 +2,8 @@ export type Game = {
     id: string;
     isPasswordProtected?: boolean;
     status: GameStatus;
-    players?: Record<string, PlayerState>;
-    state?: GameState;
+    players: Record<string, PlayerState>;
+    state: GameState;
 }
 
 export enum GameStatus {
@@ -17,5 +17,5 @@ export type GameState = {
 }
 
 export type PlayerState = {
-    sub: string;
+    isReady: boolean;
 }

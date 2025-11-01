@@ -4,7 +4,7 @@ import { GameModel } from "./models";
 
 export default (io: Server, socket: Socket) => {
     const listGames: ListGames = async (_data, cb) => {
-        const mgames = await GameModel.find({})
+        const mgames = await GameModel.find().select('-password');
         const games: Array<Game> = mgames.map(mgame => ({
             ...mgame.toObject(),
             id: mgame._id as string,
@@ -14,17 +14,27 @@ export default (io: Server, socket: Socket) => {
     }
 
     const createGame: CreateGame = async (data, cb) => {
-        console.log(data, data.password)
+        const players = {
+            [socket.data.account.sub]: {
+                isReady: false
+            }
+        }
+        const state = {}
+
         const game = new GameModel({
             password: data.password,
             status: GameStatus.WAITING,
+            players,
+            gameState: state,
         });
         const createdGame = await game.save()
 
         const response: Game = {
             id: createdGame._id as string,
             isPasswordProtected: createdGame.password !== undefined,
-            ...createdGame.toObject(),
+            status: createdGame.status,
+            players,
+            state,
         }
         cb(response);
     }

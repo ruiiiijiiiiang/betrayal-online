@@ -4,17 +4,20 @@ import { Button } from '../components/button';
 import { CoverContainer } from '../components/cover-container';
 import { Switch } from '../components/switch';
 import { useSocket } from '../components/socket';
+import { Input } from '../components/input';
 
 
 export default function NewGame() {
     const navigate = useNavigate();
     const { socket } = useSocket();
 
-    const [isPrivate, setIsPrivate] = useState<boolean>(true);
-    const [password, setPassword] = useState<string>();
+    const [isPasswordProtected, setIsPasswordProtected] = useState<boolean>(false);
+    const [password, setPassword] = useState<string>('');
 
     const handleCreateGame = async () => {
-        socket?.emit('create-game', { password }, (response: any) => {
+        socket?.emit('create-game', {
+            password: isPasswordProtected ? password : undefined
+        }, (response: any) => {
             const { id, ...game } = response;
             navigate(`/games/${id}`);
             console.log(game)
@@ -34,20 +37,19 @@ export default function NewGame() {
                         <div className='flex items-center justify-between'>
                             <label className='block text-amber-900 font-medium'>Password Protected Game</label>
                             <Switch
-                                checked={isPrivate}
-                                onChange={(v: boolean) => setIsPrivate(v)}
+                                checked={isPasswordProtected}
+                                onChange={(v: boolean) => setIsPasswordProtected(v)}
                             />
                         </div>
 
-                        {isPrivate && (
+                        {isPasswordProtected && (
                             <div className='space-y-2'>
-                                <input
+                                <Input
                                     id='gamePassword'
                                     type='password'
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder='Password to join this game'
-                                    className='w-full rounded border px-3 py-2'
                                 />
                                 <p className='text-sm text-amber-800'>
                                     Set a password so only players with the password can join.
@@ -62,6 +64,7 @@ export default function NewGame() {
                     <Button
                         onClick={handleCreateGame}
                         className='flex-1 bg-yellow-700 text-white font-tomarik-brush text-lg px-6 py-3 hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed'
+                        disabled={isPasswordProtected && password.trim() === ''}
                     >
                         Create Game
                     </Button>
