@@ -13,7 +13,7 @@ export const ProtectedRoute = () => {
 
     if (isConnecting) {
         return (
-            <div className="min-h-screen bg-[url('/bg-light-big.webp')] bg-repeat bg-cover bg-center flex items-center justify-center">
+            <div className="min-h-screen bg-[url('/bg-light-big.jpg')] bg-repeat bg-cover bg-center flex items-center justify-center">
                 <div className="text-yellow-900 text-2xl font-tomarik-brush">Loading...</div>
             </div>
         )
