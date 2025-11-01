@@ -25,8 +25,8 @@ export default function NewGame() {
                     setError(response.error);
                     setIsCreating(false);
                 } else {
-                    const { gameId } = response;
-                    navigate(`/matches/${gameId}`);
+                    const { id } = response;
+                    navigate(`/games/${id}`);
                 }
             });
         } catch (err: any) {
