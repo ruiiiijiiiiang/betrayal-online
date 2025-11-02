@@ -19,6 +19,7 @@ export default (io: Server, socket: Socket) => {
     }
 
     const createGame: CreateGame = async (data, cb) => {
+        const { name, password } = data;
         const players = {
             [socket.data.account.sub]: {
                 isReady: false
@@ -29,7 +30,8 @@ export default (io: Server, socket: Socket) => {
         const createdAt = DateTime.now();
 
         const game = new GameModel({
-            password: data.password,
+            name,
+            password,
             status: GameStatus.WAITING,
             players,
             playersOrder,
@@ -40,6 +42,7 @@ export default (io: Server, socket: Socket) => {
 
         const response: Game = {
             id: createdGame._id as string,
+            name,
             isPasswordProtected: createdGame.password !== undefined,
             status: createdGame.status,
             players,

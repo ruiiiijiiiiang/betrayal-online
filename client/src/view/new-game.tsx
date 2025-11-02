@@ -5,17 +5,21 @@ import { CoverContainer } from '../components/cover-container';
 import { Switch } from '../components/switch';
 import { useSocket } from '../components/socket';
 import { Input } from '../components/input';
+import { useAuth0 } from '@auth0/auth0-react';
 
 
 export default function NewGame() {
     const navigate = useNavigate();
+    const { user } = useAuth0();
     const { socket } = useSocket();
 
+    const [name, setName] = useState<string>(`${user?.name}'s Game`);
     const [isPasswordProtected, setIsPasswordProtected] = useState<boolean>(false);
     const [password, setPassword] = useState<string>('');
 
     const handleCreateGame = async () => {
         socket?.emit('create-game', {
+            name,
             password: isPasswordProtected ? password : undefined
         }, (response: any) => {
             const { id, ...game } = response;
@@ -32,6 +36,18 @@ export default function NewGame() {
                 </div>
 
                 <div className='space-y-5'>
+                    {/* Game Name */}
+                    <div className='space-y-2'>
+                        <label htmlFor='gameName' className='block text-amber-900 font-medium'>Game Name</label>
+                        <Input
+                            id='gameName'
+                            type='text'
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder='Enter a name for your game'
+                        />
+                    </div>
+
                     {/* Game Password */}
                     <div className='space-y-2'>
                         <div className='flex items-center justify-between'>

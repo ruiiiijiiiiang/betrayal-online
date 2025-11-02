@@ -22,6 +22,7 @@ export type MGame = Omit<Game, 'id' | 'isPasswordProtected'> & Document & {
 };
 
 const gameSchema = new Schema<MGame>({
+    name: { type: String, required: true },
     password: { type: String },
     status: { type: String, required: true },
     players: { type: Schema.Types.Mixed, required: true },

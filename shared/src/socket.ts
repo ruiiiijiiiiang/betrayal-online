@@ -17,7 +17,7 @@ export interface ListGamesResponse { games: Array<Game>; }
 export type ListGames = SocketEventFn<any, ListGamesResponse>;
 
 // Create Game
-export interface CreateGameRequest { password?: string; }
+export interface CreateGameRequest { name: string;  password?: string; }
 export type CreateGame = SocketEventFn<CreateGameRequest, Game>;
 
 // Join Game

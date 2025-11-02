@@ -2,6 +2,7 @@ import { DateTime } from "luxon";
 
 export type Game = {
     id: string;
+    name: string;
     isPasswordProtected?: boolean;
     status: GameStatus;
     players: Record<string, PlayerState>;

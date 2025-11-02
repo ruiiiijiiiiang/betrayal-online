@@ -44,7 +44,7 @@ export default function GamesList() {
                             onClick={() => onGameDetails(game.id)}
                         >
                             <div>
-                                <div className='text-xl text-amber-900 font-medium'>Game {game.id}</div>
+                                <div className='text-xl text-amber-900 font-medium'>{game.name}</div>
                                 <div className='text-amber-800 text-sm'>{Object.keys(game.players).length}/6 players</div>
                                 <p className='text-sm text-amber-800'>Status: {game.status}</p>
                                 <p className='text-sm text-amber-800'>Password Protected: {game.isPasswordProtected ? 'Yes' : 'No'}</p>
