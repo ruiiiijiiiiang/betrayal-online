@@ -10,14 +10,16 @@ export interface ClientToServerEvents {
 export interface InterServerEvents { }
 export interface SocketData { account: Account }
 
-export type SocketEventFn<Data, CallbackFn> = (data: Data, callback: CallbackFn) => void;
+export type SocketEventFn<Request, Response> = (request: Request, respond: (response: Response) => void) => void;
 
 // List Games
-export type ListGames = SocketEventFn<any, (data: { games: Array<Game> }) => void>;
+export interface ListGamesResponse { games: Array<Game>; }
+export type ListGames = SocketEventFn<any, ListGamesResponse>;
 
 // Create Game
 export interface CreateGameRequest { password?: string; }
-export type CreateGame = SocketEventFn<CreateGameRequest, (data: Game) => void>;
+export type CreateGame = SocketEventFn<CreateGameRequest, Game>;
 
 // Join Game
-export type JoinGame = SocketEventFn<{ gameId: string }, (data: any) => void>;
+export interface JoinGameRequest { gameId: string; }
+export type JoinGame = SocketEventFn<JoinGameRequest, any>;
