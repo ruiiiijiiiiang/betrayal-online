@@ -37,7 +37,7 @@ createRoot(document.getElementById('root')!).render(
             <Routes>
               <Route path="/" element={<BetrayalCover />} />
               <Route element={<ProtectedRoute />}>
-                <Route path="/matches" element={<GamesList />} />
+                <Route path="/games" element={<GamesList />} />
                 <Route path="/games/new" element={<NewGame />} />
                 <Route path="/games/:gameId" element={<Game />} />
               </Route>

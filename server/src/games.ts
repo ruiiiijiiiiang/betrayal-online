@@ -5,12 +5,16 @@ import { GameModel } from "./models";
 
 export default (io: Server, socket: Socket) => {
     const listGames: ListGames = async (_, cb) => {
-        const mgames = await GameModel.find().select('-password');
-        const games: Array<Game> = mgames.map(mgame => ({
-            ...mgame.toObject(),
-            id: mgame._id as string,
-            isPasswordProtected: !!mgame.password
-        }));
+        const mgames = await GameModel.find();
+        const games = mgames.map(mgame => {
+            const obj = mgame.toObject() as any;
+            const { password, ...rest } = obj;
+            return {
+                ...rest,
+                id: mgame._id as string,
+                isPasswordProtected: !!password
+            };
+        });
         cb({ games });
     }
 
