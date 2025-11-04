@@ -14,7 +14,7 @@ export default function Game() {
     if (!gameId) return
 
     useEffect(() => {
-        socket?.emit('get-game', { gameId }, (response) => {
+        socket.emit('get-game', { gameId }, (response) => {
             setGame(response.game);
         })
     }, [socket, gameId]);

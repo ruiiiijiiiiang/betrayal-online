@@ -13,7 +13,7 @@ export default function GamesList() {
     const { socket } = useSocket();
 
     const loadGames = async () => {
-        socket?.emit('list-games', {}, (response) => {
+        socket.emit('list-games', {}, (response) => {
             setGames(response.games);
         })
     }

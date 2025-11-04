@@ -18,7 +18,7 @@ export default function NewGame() {
     const [password, setPassword] = useState<string>('');
 
     const handleCreateGame = async () => {
-        socket?.emit('create-game', {
+        socket.emit('create-game', {
             name,
             password: isPasswordProtected ? password : undefined
         }, (response: any) => {

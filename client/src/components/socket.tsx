@@ -4,7 +4,7 @@ import type { ServerToClientEvents, ClientToServerEvents } from '@betrayal/share
 import { useAuth0 } from '@auth0/auth0-react'
 
 type SocketContextValue = {
-    socket: Socket<ServerToClientEvents, ClientToServerEvents> | null
+    socket: Socket<ServerToClientEvents, ClientToServerEvents>
     isConnected: boolean
     isConnecting: boolean
     error: any | null
@@ -15,15 +15,19 @@ type SocketContextValue = {
 const SocketContext = createContext<SocketContextValue>(null)
 
 export function SocketProvider({ children }: { children: React.ReactNode }) {
+    const url = "http://localhost:4000"
+
     const { isAuthenticated, getAccessTokenSilently } = useAuth0()
 
-    const socketRef = useRef<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null)
+    const socketRef = useRef<Socket<ServerToClientEvents, ClientToServerEvents>>(
+        io(url, {
+            autoConnect: false,
+        })
+    )
     const [isConnected, setIsConnected] = useState(false)
     const [isConnecting, setIsConnecting] = useState(false)
     const [error, setError] = useState<any | null>(null)
     const [accessToken, setAccessToken] = useState<string | null>(null)
-
-    const url = "http://localhost:4000"
 
     const fetchToken = useCallback(async () => {
         try {
@@ -85,9 +89,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
             try {
                 socketRef.current.disconnect()
             } catch (e) {
-                // ignore
             }
-            socketRef.current = null
         }
         setIsConnected(false)
         setIsConnecting(false)
