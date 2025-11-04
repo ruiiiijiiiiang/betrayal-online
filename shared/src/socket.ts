@@ -4,6 +4,7 @@ import { Game } from "./game";
 export interface ServerToClientEvents { }
 export interface ClientToServerEvents {
     "list-games": ListGames;
+    "get-game": GetGame;
     "create-game": CreateGame;
     "join-game": JoinGame;
 }
@@ -16,8 +17,13 @@ export type SocketEventFn<Request, Response> = (request: Request, respond: (resp
 export interface ListGamesResponse { games: Array<Game>; }
 export type ListGames = SocketEventFn<any, ListGamesResponse>;
 
+// Get Game
+export interface GetGameRequest { gameId: string; }
+export interface GetGameResponse { game: Game | null; }
+export type GetGame = SocketEventFn<GetGameRequest, GetGameResponse>;
+
 // Create Game
-export interface CreateGameRequest { name: string;  password?: string; }
+export interface CreateGameRequest { name: string; password?: string; }
 export type CreateGame = SocketEventFn<CreateGameRequest, Game>;
 
 // Join Game

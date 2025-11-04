@@ -1,6 +1,6 @@
 import { type Server, Socket } from "socket.io";
 import { DateTime } from "luxon";
-import { GameStatus, ListGames, CreateGame, JoinGame, Game } from "@betrayal/shared";
+import { GameStatus, ListGames, GetGame, CreateGame, JoinGame, Game } from "@betrayal/shared";
 import { GameModel } from "./models";
 
 export default (io: Server, socket: Socket) => {
@@ -16,6 +16,23 @@ export default (io: Server, socket: Socket) => {
             };
         });
         cb({ games });
+    }
+
+    const getGame: GetGame = async (data, cb) => {
+        const { gameId } = data;
+        const mgame = await GameModel.findById(gameId);
+        if (!mgame) {
+            cb({ game: null });
+            return;
+        }
+        const obj = mgame.toObject() as any;
+        const { password, ...rest } = obj;
+        const game: Game = {
+            ...rest,
+            id: mgame._id as string,
+            isPasswordProtected: !!password
+        };
+        cb({ game });
     }
 
     const createGame: CreateGame = async (data, cb) => {
@@ -63,6 +80,7 @@ export default (io: Server, socket: Socket) => {
     }
 
     socket.on("list-games", listGames);
+    socket.on("get-game", getGame);
     socket.on("create-game", createGame);
     socket.on("join-game", joinGame);
 }

@@ -1,37 +1,37 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react';
 import { Button } from '../components/button'
 import { CoverContainer } from '../components/cover-container'
+import { useSocket } from '../components/socket';
+import { type Game } from '@betrayal/shared';
 
 export default function Game() {
-    const { user } = useAuth0()
     const { gameId } = useParams<{ gameId: string }>()
-    const [game, setGame] = useState(null)
+    const { socket } = useSocket();
+    const [game, setGame] = useState<Game | null>(null)
 
     if (!gameId) return
-    if (!user) return
 
-    const load = async () => {
-        const match = null
-        setGame(match);
-    }
-
-    const joinedMatch = false
+    useEffect(() => {
+        socket?.emit('get-game', { gameId }, (response) => {
+            setGame(response.game);
+        })
+    }, [socket, gameId]);
 
     return (
         <CoverContainer>
             <div className='bg-red-800/10 p-6 space-y-5 my-12'>
-                <h1 className='text-3xl font-tomarik-brush text-red-900/85 mb-6'>Join Match</h1>
+                <h1 className='text-3xl font-tomarik-brush text-red-900/85 mb-6'>Join Game</h1>
 
                 {!game && (
-                    <div className='text-amber-900'>Match not found.</div>
+                    <div className='text-amber-900'>Game not found.</div>
                 )}
 
                 {game && (
                     <div className='space-y-4'>
                         <div>
-                            <div className='text-amber-900 font-medium'>Match {game}</div>
+                            <div className='text-amber-900 font-medium'>Match {game.id}</div>
                             <div className='text-amber-800 text-sm'>0/0 players</div>
                         </div>
 
@@ -43,8 +43,8 @@ export default function Game() {
                         </div>
 
                         <div className='pt-2'>
-                            {!joinedMatch && <NotJoinedMatchButtons matchID={gameId} />}
-                            {joinedMatch && <JoinedMatchButtons matchID={gameId} isFull={false} />}
+                            {!true && <NotJoinedMatchButtons matchID={gameId} />}
+                            {true && <JoinedMatchButtons matchID={gameId} isFull={false} />}
                         </div>
                     </div>
                 )}
