@@ -1,5 +1,5 @@
 import { CharacterCard } from '../components/character-card';
-import { playableCharacters } from '../logic/character';
+import { playableCharacters } from '@betrayal/shared';
 
 export interface CharacterSelectionProps {
 }

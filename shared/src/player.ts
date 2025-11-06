@@ -1,5 +1,4 @@
 import { CharacterTraitScaleIndex, getCharacterById, type PlayableCharacterId } from './character';
-import { PlayerTeam } from "./types";
 
 export type PlayerConstructorParams = {
     id: string;
@@ -99,3 +98,5 @@ export class Player {
 const clampTraitScaleIndex = (index: number) => {
     return Math.min(Math.max(index, 0), 8)
 }
+
+export type PlayerTeam = 'NEUTRAL' | 'SURVIVOR' | 'TRAITOR';

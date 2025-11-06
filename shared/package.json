@@ -9,7 +9,7 @@
   "scripts": {
     "watch": "tsc -w -p tsconfig.json",
     "build": "tsc -p tsconfig.json",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist && rm -rf node_modules && rm -rf tsconfig.tsbuildinfo"
   },
   "devDependencies": {}
 }

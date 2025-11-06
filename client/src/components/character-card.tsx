@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { PlayableCharacter } from '../logic/character';
+import { PlayableCharacter } from '@betrayal/shared';
 
 const getPortraitUrl = (id: string) => `/character-boards/${id}.png`;
 
