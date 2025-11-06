@@ -1,4 +1,6 @@
-import type { RoomTileDirection, RoomTileRotation, RoomTileInducedCardType } from "./types";
+export type RoomTileDirection = 'UP' | 'RIGHT' | 'DOWN' | 'LEFT';
+export type RoomTileRotation = 0 | 90 | 180 | 270;
+export type RoomTileInducedCardType = 'OMEN' | 'EVENT' | 'ITEM';
 
 export class House {
     groundFloor: Region;
