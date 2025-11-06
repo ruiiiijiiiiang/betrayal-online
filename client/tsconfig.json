@@ -28,10 +28,5 @@
     },
     "include": [
         "src",
-        "../shared/src/board.ts",
-        "../shared/src/cards.ts",
-        "../shared/src/character.ts",
-        "../shared/src/haunt.ts",
-        "../shared/src/player.ts"
     ]
 }
