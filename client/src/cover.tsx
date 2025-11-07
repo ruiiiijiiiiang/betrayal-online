@@ -52,7 +52,7 @@ const AuthenticatedButtons = (
         user: User, logout: (options?: LogoutOptions) => Promise<void>, navigate: NavigateFunction
     }
 ) => {
-    const { socket } = useSocket();
+    const { isConnected: connected } = useSocket();
 
     const onCreateNewGame = () => {
         navigate('/games/new');
@@ -71,7 +71,7 @@ const AuthenticatedButtons = (
             <div className='flex flex-row gap-1 sm:gap-2 justify-center items-center w-full'>
                 <p className={clsx(
                     "w-2 h-2 rounded-full -mt-1",
-                    socket.connected ? "bg-green-700" : "bg-red-700"
+                    connected ? "bg-green-700" : "bg-red-700"
                 )} />
                 <p className='text-sm sm:text-base'>Signed in as <span className='font-bold'>{user.name}</span></p>
                 <p className='text-sm sm:text-base' aria-hidden="true">•</p>
