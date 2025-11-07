@@ -90,9 +90,6 @@ const JoinedMatchButtons = ({ matchID, isFull }: { matchID: string; isFull: bool
     const onCancelLeave = () => {
         setShowConfirmation(false);
     }
-    // const onLeaveMatch = async () => {
-    //     navigate(`/games/`);
-    // }
 
     return (
         <>
@@ -110,7 +107,7 @@ const JoinedMatchButtons = ({ matchID, isFull }: { matchID: string; isFull: bool
                     onClick={onLeaveMatchClick}
                     className='bg-yellow-700 text-white px-4 py-2 hover:bg-yellow-600'
                 >
-                    Leave Match
+                    Leave Game
                 </Button>
             </div>
         </div>
