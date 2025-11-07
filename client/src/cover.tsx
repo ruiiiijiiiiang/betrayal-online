@@ -52,7 +52,7 @@ const AuthenticatedButtons = (
         user: User, logout: (options?: LogoutOptions) => Promise<void>, navigate: NavigateFunction
     }
 ) => {
-    const { isConnected: connected } = useSocket();
+    const { isConnected } = useSocket();
 
     const onCreateNewGame = () => {
         navigate('/games/new');
@@ -71,7 +71,7 @@ const AuthenticatedButtons = (
             <div className='flex flex-row gap-1 sm:gap-2 justify-center items-center w-full'>
                 <p className={clsx(
                     "w-2 h-2 rounded-full -mt-1",
-                    connected ? "bg-green-700" : "bg-red-700"
+                    isConnected ? "bg-green-700" : "bg-red-700"
                 )} />
                 <p className='text-sm sm:text-base'>Signed in as <span className='font-bold'>{user.name}</span></p>
                 <p className='text-sm sm:text-base' aria-hidden="true">•</p>
@@ -96,7 +96,7 @@ const UnauthenticatedButtons = ({ handleSocialLogin }: { handleSocialLogin: (con
                     onClick={() => handleSocialLogin('google-oauth2')}
                     className="w-full bg-white border-2 border-gray-300 text-gray-700 font-medium px-6 py-3 hover:bg-gray-50 flex items-center justify-center gap-3 rounded-full"
                 >
-                    <img src="/public/social-icons/google_original.svg" alt="Continue with Google" className="w-5 h-5" />
+                    <img src="/social-icons/google_original.svg" alt="Continue with Google" className="w-5 h-5" />
                 </Button>
 
                 {/* Continue with Apple */}
@@ -104,7 +104,7 @@ const UnauthenticatedButtons = ({ handleSocialLogin }: { handleSocialLogin: (con
                     onClick={() => handleSocialLogin('apple')}
                     className="w-full bg-black font-medium px-6 py-3 hover:bg-gray-900 flex items-center justify-center gap-3 rounded-full"
                 >
-                    <img src="/public/social-icons/apple_white.svg" alt="Continue with Apple" className="w-5 h-5" />
+                    <img src="/social-icons/apple_white.svg" alt="Continue with Apple" className="w-5 h-5" />
                 </Button>
 
                 {/* Continue with Microsoft */}
@@ -112,7 +112,7 @@ const UnauthenticatedButtons = ({ handleSocialLogin }: { handleSocialLogin: (con
                     onClick={() => handleSocialLogin('windowslive')}
                     className="w-full bg-[#2F2F2F] font-medium px-6 py-3 hover:bg-[#1a1a1a] flex items-center justify-center gap-3 rounded-full"
                 >
-                    <img src="/public/social-icons/microsoft_original.svg" alt="Continue with Microsoft" className="w-5 h-5" />
+                    <img src="/social-icons/microsoft_original.svg" alt="Continue with Microsoft" className="w-5 h-5" />
                 </Button>
             </div>
         </div>
