@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useState, useEffect, useCallback } from 'react'
+import React, { createContext, useContext, useMemo, useState, useEffect } from 'react'
 import { io, Socket } from 'socket.io-client'
 import type { ServerToClientEvents, ClientToServerEvents } from '@betrayal/shared'
 import { useAuth0 } from '@auth0/auth0-react'
