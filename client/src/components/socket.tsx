@@ -25,7 +25,6 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     const [error, setError] = useState<Error>()
 
     useEffect(() => {
-        SINGLETON_SOCKET.connect()
         SINGLETON_SOCKET.auth = async (cb) => {
             const token = await getAccessTokenSilently()
             cb({ token })
@@ -43,6 +42,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
             setIsConnecting(false)
             setError(undefined)
         })
+        SINGLETON_SOCKET.connect()
         return () => {
             SINGLETON_SOCKET.disconnect()
             SINGLETON_SOCKET.removeAllListeners()
