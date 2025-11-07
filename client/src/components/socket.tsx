@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useState, useEffect, useCallback } from 'react'
+import React, { createContext, useContext, useMemo, useState, useEffect } from 'react'
 import { io, Socket } from 'socket.io-client'
 import type { ServerToClientEvents, ClientToServerEvents } from '@betrayal/shared'
 import { useAuth0 } from '@auth0/auth0-react'
@@ -8,8 +8,6 @@ type SocketContextValue = {
     isConnected: boolean
     isConnecting: boolean
     error?: Error
-    connect: () => Promise<void>
-    disconnect: () => void
 }
 
 const SocketContext = createContext<SocketContextValue>(undefined!)
@@ -17,29 +15,19 @@ const SocketContext = createContext<SocketContextValue>(undefined!)
 export function SocketProvider({ children }: { children: React.ReactNode }) {
     const url = "http://localhost:4000"
     const { isAuthenticated, getAccessTokenSilently } = useAuth0()
-    const [socket, setSocket] = useState<Socket<ServerToClientEvents, ClientToServerEvents>>(
-        io(url, {
-            autoConnect: false,
-        })
-    )
     const [isConnected, setIsConnected] = useState(false)
     const [isConnecting, setIsConnecting] = useState(false)
     const [error, setError] = useState<Error>()
+    const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(url, {
+        autoConnect: true,
+        withCredentials: true,
+        auth: async (cb) => {
+            const token = await getAccessTokenSilently()
+            cb({ token })
+        },
+    })
 
-    const connect = useCallback(async () => {
-        if (!isAuthenticated) return
-
-        setIsConnecting(true)
-        setError(undefined)
-
-        const token = await getAccessTokenSilently()
-        const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(url, {
-            autoConnect: true,
-            withCredentials: true,
-            auth: { token: `Bearer ${token}` },
-        })
-        setSocket(socket)
-
+    useEffect(() => {
         socket.on('connect', () => {
             setIsConnected(true)
             setIsConnecting(false)
@@ -53,18 +41,11 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
             setError(err)
             setIsConnecting(false)
         })
-    }, [isAuthenticated])
 
-    const disconnect = useCallback(() => {
-        socket.disconnect()
-        socket.removeAllListeners()
-        setIsConnected(false)
-        setIsConnecting(false)
-    }, [socket])
-
-    useEffect(() => {
-        void connect()
-        return () => disconnect()
+        return () => {
+            socket.disconnect()
+            socket.removeAllListeners()
+        }
     }, [isAuthenticated])
 
     const value = useMemo(() => ({
@@ -72,9 +53,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
         isConnected,
         isConnecting,
         error,
-        connect,
-        disconnect,
-    }), [isConnected, isConnecting, error, connect, disconnect])
+    }), [isConnected, isConnecting, error])
 
     return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>
 }
