@@ -7,12 +7,12 @@ type SocketContextValue = {
     socket: Socket<ServerToClientEvents, ClientToServerEvents>
     isConnected: boolean
     isConnecting: boolean
-    error: any | null
-    connect: () => Promise<Socket<ServerToClientEvents, ClientToServerEvents> | null>
+    error?: Error
+    connect: () => Promise<void>
     disconnect: () => void
-} | null
+}
 
-const SocketContext = createContext<SocketContextValue>(null)
+const SocketContext = createContext<SocketContextValue>(undefined!)
 
 export function SocketProvider({ children }: { children: React.ReactNode }) {
     const url = "http://localhost:4000"
@@ -26,60 +26,36 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     )
     const [isConnected, setIsConnected] = useState(false)
     const [isConnecting, setIsConnecting] = useState(false)
-    const [error, setError] = useState<any | null>(null)
-    const [accessToken, setAccessToken] = useState<string | null>(null)
-
-    const fetchToken = useCallback(async () => {
-        try {
-            const token = await getAccessTokenSilently()
-            setAccessToken(token)
-            return token
-        } catch (err) {
-            setAccessToken(null)
-            return null
-        }
-    }, [getAccessTokenSilently])
+    const [error, setError] = useState<Error>()
 
     const connect = useCallback(async () => {
+        if (!isAuthenticated) return
+
         setIsConnecting(true)
-        setError(null)
+        setError(undefined)
 
-        try {
-            let token = accessToken
-            if (!token && isAuthenticated) {
-                token = await fetchToken()
-            }
+        const token = await getAccessTokenSilently()
+        const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(url, {
+            autoConnect: true,
+            withCredentials: true,
+            auth: { token: `Bearer ${token}` },
+        })
+        setSocket(socket)
 
-            const authPayload = token ? { token: `Bearer ${token}` } : undefined
+        socket.on('connect', () => {
+            setIsConnected(true)
+            setIsConnecting(false)
+        })
 
-            const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(url, {
-                autoConnect: true,
-                withCredentials: true,
-                auth: authPayload,
-            })
-            setSocket(socket)
+        socket.on('disconnect', () => {
+            setIsConnected(false)
+        })
 
-            socket.on('connect', () => {
-                setIsConnected(true)
-                setIsConnecting(false)
-            })
-
-            socket.on('disconnect', () => {
-                setIsConnected(false)
-            })
-
-            socket.on('connect_error', (err) => {
-                setError(err)
-                setIsConnecting(false)
-            })
-
-            return socket
-        } catch (err) {
+        socket.on('connect_error', (err) => {
             setError(err)
             setIsConnecting(false)
-            return null
-        }
-    }, [accessToken, fetchToken, isAuthenticated, url])
+        })
+    }, [isAuthenticated])
 
     const disconnect = useCallback(() => {
         socket.disconnect()
@@ -87,34 +63,10 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
         setIsConnecting(false)
     }, [])
 
-    // Auto connect when authenticated
     useEffect(() => {
-        if (isAuthenticated) void connect()
-        else disconnect()
-
-        return () => {
-            disconnect()
-        }
-    }, [isAuthenticated, connect, disconnect])
-
-    // If token changes while connected, update handshake and reconnect
-    useEffect(() => {
-        if (accessToken) {
-            try {
-                socket.auth = { token: `Bearer ${accessToken}` }
-                socket.disconnect()
-                socket.connect()
-            } catch (e) {
-                // ignore
-            }
-        }
-    }, [accessToken])
-
-    // Fetch token when authenticated initially
-    useEffect(() => {
-        if (isAuthenticated) void fetchToken()
-        else setAccessToken(null)
-    }, [isAuthenticated, fetchToken])
+        void connect()
+        return () => disconnect()
+    }, [isAuthenticated])
 
     const value = useMemo(() => ({
         socket,
