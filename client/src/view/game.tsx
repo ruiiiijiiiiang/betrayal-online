@@ -79,7 +79,7 @@ const JoinedMatchButtons = ({ matchID, isFull }: { matchID: string; isFull: bool
         navigate(`/matches/${matchID}/board`);
     }
     const onLeaveMatch = async () => {
-        navigate(`/matches/`);
+        navigate(`/games/`);
     }
 
     return (
