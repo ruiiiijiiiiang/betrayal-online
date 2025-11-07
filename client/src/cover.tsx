@@ -65,7 +65,7 @@ const AuthenticatedButtons = (
     return (
         <div className='flex flex-col gap-6 justify-center items-center w-full'>
             <div className='flex flex-col sm:flex-row gap-2 sm:gap-4 w-full justify-center items-center'>
-                <Button onClick={onCreateNewGame} className='bg-yellow-700 text-white font-tomarik-brush sm:text-xl px-8 py-4 hover:bg-yellow-600 w-full max-w-xs sm:w-fit'>Create New Game</Button>
+                <Button onClick={onCreateNewGame} className='bg-yellow-700/90 text-white font-tomarik-brush sm:text-xl px-8 py-4 hover:bg-yellow-700 w-full max-w-xs sm:w-fit'>Create New Game</Button>
                 <Button onClick={onJoinExisting} className='bg-white/80 text-amber-700 font-tomarik-brush sm:text-xl px-8 py-4 hover:bg-white w-full max-w-xs sm:w-fit'>Join Existing</Button>
             </div>
             <div className='flex flex-row gap-1 sm:gap-2 justify-center items-center w-full'>
