@@ -12,52 +12,49 @@ type SocketContextValue = {
 
 const SocketContext = createContext<SocketContextValue>(undefined!)
 
+const SOCKET_URL = "http://localhost:4000"
+const SINGLETON_SOCKET = io(SOCKET_URL, {
+    autoConnect: false,
+    withCredentials: true,
+})
+
 export function SocketProvider({ children }: { children: React.ReactNode }) {
-    const url = "http://localhost:4000"
     const { isAuthenticated, getAccessTokenSilently } = useAuth0()
     const [isConnected, setIsConnected] = useState(false)
     const [isConnecting, setIsConnecting] = useState(false)
     const [error, setError] = useState<Error>()
-    const socket: Socket<ServerToClientEvents, ClientToServerEvents> = useMemo(() => {
-        const socket = io(url, {
-            autoConnect: true,
-            withCredentials: true,
-            auth: async (cb) => {
-                const token = await getAccessTokenSilently()
-                cb({ token })
-            },
-        })
-
-        socket.on('connect', () => {
-            setIsConnected(true)
-            setIsConnecting(false)
-        })
-
-        socket.on('disconnect', () => {
-            setIsConnected(false)
-        })
-
-        socket.on('connect_error', (err) => {
-            setError(err)
-            setIsConnecting(false)
-        })
-
-        return socket
-    }, [])
 
     useEffect(() => {
-        return () => {
-            socket.disconnect()
-            socket.removeAllListeners()
+        SINGLETON_SOCKET.connect()
+        SINGLETON_SOCKET.auth = async (cb) => {
+            const token = await getAccessTokenSilently()
+            cb({ token })
         }
-    }, [isAuthenticated, socket])
+        SINGLETON_SOCKET.on('connect_error', (err) => {
+            setError(err)
+        })
+        SINGLETON_SOCKET.on('connect', () => {
+            setIsConnected(true)
+            setIsConnecting(false)
+            setError(undefined)
+        })
+        SINGLETON_SOCKET.on('disconnect', () => {
+            setIsConnected(false)
+            setIsConnecting(false)
+            setError(undefined)
+        })
+        return () => {
+            SINGLETON_SOCKET.disconnect()
+            SINGLETON_SOCKET.removeAllListeners()
+        }
+    }, [isAuthenticated, SINGLETON_SOCKET])
 
     const value = useMemo(() => ({
-        socket,
+        socket: SINGLETON_SOCKET,
         isConnected,
         isConnecting,
         error,
-    }), [isConnected, isConnecting, error])
+    }), [SINGLETON_SOCKET, isConnected, isConnecting, error])
 
     return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>
 }
