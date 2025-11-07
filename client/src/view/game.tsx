@@ -75,14 +75,27 @@ const NotJoinedMatchButtons = ({ matchID }: { matchID: string }) => {
 
 const JoinedMatchButtons = ({ matchID, isFull }: { matchID: string; isFull: boolean }) => {
     const navigate = useNavigate();
+    const [showConfirmation, setShowConfirmation] = useState(false);
+
     const onGoToBoard = () => {
         navigate(`/matches/${matchID}/board`);
     }
-    const onLeaveMatch = async () => {
+    const confirmLeaveMatch = async () => {
+        setShowConfirmation(false);
         navigate(`/games/`);
     }
+    const onLeaveMatchClick = () => {
+        setShowConfirmation(true);
+    }
+    const onCancelLeave = () => {
+        setShowConfirmation(false);
+    }
+    // const onLeaveMatch = async () => {
+    //     navigate(`/games/`);
+    // }
 
     return (
+        <>
         <div className="flex flex-col gap-2">
             {!isFull && <p className='text-orange-800/80'>Waiting for players...</p>}
             <div className="flex flex-row gap-2">
@@ -94,13 +107,38 @@ const JoinedMatchButtons = ({ matchID, isFull }: { matchID: string; isFull: bool
                     Go to Board
                 </Button>
                 <Button
-                    onClick={onLeaveMatch}
+                    onClick={onLeaveMatchClick}
                     className='bg-yellow-700 text-white px-4 py-2 hover:bg-yellow-600'
                 >
                     Leave Match
                 </Button>
             </div>
         </div>
+        {showConfirmation && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+                    <div className="bg-white/80 rounded-lg shadow-lg p-6 max-w-sm w-full">
+                        <p className="text-red-900/85 text-xl font-tomarik-brush mb-3">Are you sure you wnat to leave?</p>
+                        <p className="text-sm text-gray-600 mb-6">
+                            The game is about to start!
+                        </p>
+                        <div className="flex justify-end gap-2">
+                            <Button
+                                onClick={onCancelLeave}
+                                className='bg-green-700 text-white px-4 py-2 hover:bg-green-800 disabled:opacity-50'
+                            >
+                                Continue Waiting
+                            </Button>
+                            <Button
+                                onClick={confirmLeaveMatch}
+                                className='bg-yellow-700 text-white px-4 py-2 hover:bg-yellow-600'
+                            >
+                                Leave
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            </>
     )
 }
 
