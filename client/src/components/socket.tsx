@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useRef, useState, useEffect, useCallback } from 'react'
+import React, { createContext, useContext, useMemo, useState, useEffect, useCallback } from 'react'
 import { io, Socket } from 'socket.io-client'
 import type { ServerToClientEvents, ClientToServerEvents } from '@betrayal/shared'
 import { useAuth0 } from '@auth0/auth0-react'
@@ -19,7 +19,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 
     const { isAuthenticated, getAccessTokenSilently } = useAuth0()
 
-    const socketRef = useRef<Socket<ServerToClientEvents, ClientToServerEvents>>(
+    const [socket, setSocket] = useState<Socket<ServerToClientEvents, ClientToServerEvents>>(
         io(url, {
             autoConnect: false,
         })
@@ -41,8 +41,6 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     }, [getAccessTokenSilently])
 
     const connect = useCallback(async () => {
-        if (socketRef.current && socketRef.current.connected) return socketRef.current
-
         setIsConnecting(true)
         setError(null)
 
@@ -59,8 +57,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
                 withCredentials: true,
                 auth: authPayload,
             })
-
-            socketRef.current = socket
+            setSocket(socket)
 
             socket.on('connect', () => {
                 setIsConnected(true)
@@ -85,12 +82,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     }, [accessToken, fetchToken, isAuthenticated, url])
 
     const disconnect = useCallback(() => {
-        if (socketRef.current) {
-            try {
-                socketRef.current.disconnect()
-            } catch (e) {
-            }
-        }
+        socket.disconnect()
         setIsConnected(false)
         setIsConnecting(false)
     }, [])
@@ -107,8 +99,6 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 
     // If token changes while connected, update handshake and reconnect
     useEffect(() => {
-        const socket = socketRef.current
-        if (!socket) return
         if (accessToken) {
             try {
                 socket.auth = { token: `Bearer ${accessToken}` }
@@ -127,7 +117,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     }, [isAuthenticated, fetchToken])
 
     const value = useMemo(() => ({
-        socket: socketRef.current,
+        socket,
         isConnected,
         isConnecting,
         error,
