@@ -29,7 +29,6 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
         })
 
         socket.on('connect', () => {
-            console.log(111)
             setIsConnected(true)
             setIsConnecting(false)
         })
