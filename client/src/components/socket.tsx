@@ -18,14 +18,16 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     const [isConnected, setIsConnected] = useState(false)
     const [isConnecting, setIsConnecting] = useState(false)
     const [error, setError] = useState<Error>()
-    const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(url, {
-        autoConnect: true,
-        withCredentials: true,
-        auth: async (cb) => {
-            const token = await getAccessTokenSilently()
-            cb({ token })
-        },
-    })
+    const socket: Socket<ServerToClientEvents, ClientToServerEvents> = useMemo(() => {
+        return io(url, {
+            autoConnect: true,
+            withCredentials: true,
+            auth: async (cb) => {
+                const token = await getAccessTokenSilently()
+                cb({ token })
+            },
+        })
+    }, [])
 
     useEffect(() => {
         socket.on('connect', () => {
