@@ -16,9 +16,7 @@ const SocketContext = createContext<SocketContextValue>(undefined!)
 
 export function SocketProvider({ children }: { children: React.ReactNode }) {
     const url = "http://localhost:4000"
-
     const { isAuthenticated, getAccessTokenSilently } = useAuth0()
-
     const [socket, setSocket] = useState<Socket<ServerToClientEvents, ClientToServerEvents>>(
         io(url, {
             autoConnect: false,
