@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useState, useEffect } from 'react'
+import React, { createContext, useContext, useMemo, useState, useEffect, useCallback } from 'react'
 import { io, Socket } from 'socket.io-client'
 import type { ServerToClientEvents, ClientToServerEvents } from '@betrayal/shared'
 import { useAuth0 } from '@auth0/auth0-react'
@@ -19,7 +19,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     const [isConnecting, setIsConnecting] = useState(false)
     const [error, setError] = useState<Error>()
     const socket: Socket<ServerToClientEvents, ClientToServerEvents> = useMemo(() => {
-        return io(url, {
+        const socket = io(url, {
             autoConnect: true,
             withCredentials: true,
             auth: async (cb) => {
@@ -27,10 +27,9 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
                 cb({ token })
             },
         })
-    }, [])
 
-    useEffect(() => {
         socket.on('connect', () => {
+            console.log(111)
             setIsConnected(true)
             setIsConnecting(false)
         })
@@ -44,11 +43,15 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
             setIsConnecting(false)
         })
 
+        return socket
+    }, [])
+
+    useEffect(() => {
         return () => {
             socket.disconnect()
             socket.removeAllListeners()
         }
-    }, [isAuthenticated])
+    }, [isAuthenticated, socket])
 
     const value = useMemo(() => ({
         socket,
