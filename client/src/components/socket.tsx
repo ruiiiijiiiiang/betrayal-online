@@ -5,8 +5,6 @@ import { useAuth0 } from '@auth0/auth0-react'
 
 type SocketContextValue = {
     socket: Socket<ServerToClientEvents, ClientToServerEvents>
-    isConnected: boolean
-    isConnecting: boolean
     error?: Error
     connect: () => Promise<void>
     disconnect: () => void
@@ -17,19 +15,12 @@ const SocketContext = createContext<SocketContextValue>(undefined!)
 export function SocketProvider({ children }: { children: React.ReactNode }) {
     const url = "http://localhost:4000"
     const { isAuthenticated, getAccessTokenSilently } = useAuth0()
-    const [socket, setSocket] = useState<Socket<ServerToClientEvents, ClientToServerEvents>>(
-        io(url, {
-            autoConnect: false,
-        })
-    )
-    const [isConnected, setIsConnected] = useState(false)
-    const [isConnecting, setIsConnecting] = useState(false)
+    const [socket, setSocket] = useState<Socket<ServerToClientEvents, ClientToServerEvents>>(io())
     const [error, setError] = useState<Error>()
 
     const connect = useCallback(async () => {
         if (!isAuthenticated) return
 
-        setIsConnecting(true)
         setError(undefined)
 
         const token = await getAccessTokenSilently()
@@ -40,26 +31,14 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
         })
         setSocket(socket)
 
-        socket.on('connect', () => {
-            setIsConnected(true)
-            setIsConnecting(false)
-        })
-
-        socket.on('disconnect', () => {
-            setIsConnected(false)
-        })
-
         socket.on('connect_error', (err) => {
             setError(err)
-            setIsConnecting(false)
         })
     }, [isAuthenticated])
 
     const disconnect = useCallback(() => {
         socket.disconnect()
-        setIsConnected(false)
-        setIsConnecting(false)
-    }, [])
+    }, [socket])
 
     useEffect(() => {
         void connect()
@@ -68,12 +47,10 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 
     const value = useMemo(() => ({
         socket,
-        isConnected,
-        isConnecting,
         error,
         connect,
         disconnect,
-    }), [isConnected, isConnecting, error, connect, disconnect])
+    }), [socket, error, connect, disconnect])
 
     return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>
 }
