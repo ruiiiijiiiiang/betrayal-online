@@ -5,7 +5,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 export const Button = ({ className, children, ...props }: ButtonProps) => {
   const classes = clsx(
     // Base
-    'relative isolate inline-flex items-center justify-center gap-x-2 rounded-none text-base/6 font-semibold',
+    'relative isolate inline-flex items-center justify-center gap-x-2 text-base/6 font-semibold',
     // Focus
     'focus:outline-none data-[focus]:outline data-[focus]:outline-2 data-[focus]:outline-offset-2 data-[focus]:outline-blue-500',
     // Disabled
@@ -14,6 +14,7 @@ export const Button = ({ className, children, ...props }: ButtonProps) => {
     'cursor-pointer',
     // Transition
     'transition-all duration-100 ease-in-out',
+    // Classes
     className,
   )
 
