@@ -57,9 +57,10 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 
     const disconnect = useCallback(() => {
         socket.disconnect()
+        socket.removeAllListeners()
         setIsConnected(false)
         setIsConnecting(false)
-    }, [])
+    }, [socket])
 
     useEffect(() => {
         void connect()
