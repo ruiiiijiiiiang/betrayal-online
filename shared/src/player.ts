@@ -1,102 +1,76 @@
-import { CharacterTraitScaleIndex, getCharacterById, type PlayableCharacterId } from './character';
+import { CharacterTraitScaleIndex, getCharacterById, type PlayableCharacterId } from './character'
 
-export type PlayerConstructorParams = {
-    id: string;
-    characterId: PlayableCharacterId;
-} | undefined
 
-export class Player {
-    id: string;
+export interface Player {
+    id: string
 
     characterId: PlayableCharacterId
     team: PlayerTeam
 
-    mightIndex: CharacterTraitScaleIndex;
-    speedIndex: CharacterTraitScaleIndex;
-    sanityIndex: CharacterTraitScaleIndex;
-    knowledgeIndex: CharacterTraitScaleIndex;
+    mightIndex: CharacterTraitScaleIndex
+    speedIndex: CharacterTraitScaleIndex
+    sanityIndex: CharacterTraitScaleIndex
+    knowledgeIndex: CharacterTraitScaleIndex
+}
 
-    constructor(params: PlayerConstructorParams) {
-        if (!params) {
-            this.id = '';
-            this.characterId = 'josef-hooper';
-            this.team = 'NEUTRAL';
-            this.mightIndex = 0;
-            this.speedIndex = 0;
-            this.sanityIndex = 0;
-            this.knowledgeIndex = 0;
-            return;
-        }
+const boundTraitScaleIndex = (index: number) => Math.min(Math.max(index, 0), 8)
 
-        this.id = params.id;
-        this.characterId = params.characterId;
-        this.team = 'NEUTRAL';
-
-        const character = getCharacterById(params.characterId);
-        this.mightIndex = character.startingMightIndex;
-        this.speedIndex = character.startingSpeedIndex;
-        this.sanityIndex = character.startingSanityIndex;
-        this.knowledgeIndex = character.startingKnowledgeIndex;
-    }
-
-    get character() {
-        return getCharacterById(this.characterId);
-    }
-
-    get might() {
-        return this.character.mightScale[this.mightIndex]
-    }
-
-    get speed() {
-        return this.character.speedScale[this.speedIndex]
-    }
-
-    get sanity() {
-        return this.character.sanityScale[this.sanityIndex]
-    }
-
-    get knowledge() {
-        return this.character.knowledgeScale[this.knowledgeIndex]
-    }
-
-    public updateTraits({ mightDelta, speedDelta, sanityDelta, knowledgeDelta }: Partial<{ mightDelta: number | undefined, speedDelta: number | undefined, sanityDelta: number | undefined, knowledgeDelta: number | undefined }>) {
-        if (mightDelta !== undefined) {
-            this.mightIndex += clampTraitScaleIndex(mightDelta)
-        }
-        if (speedDelta !== undefined) {
-            this.speedIndex += clampTraitScaleIndex(speedDelta)
-        }
-        if (sanityDelta !== undefined) {
-            this.sanityIndex += clampTraitScaleIndex(sanityDelta)
-        }
-        if (knowledgeDelta !== undefined) {
-            this.knowledgeIndex += clampTraitScaleIndex(knowledgeDelta)
+export interface PlayerConstructorParams { id: string; characterId: PlayableCharacterId }
+export const createPlayer = (params?: PlayerConstructorParams): Player => {
+    if (!params) {
+        return {
+            id: '',
+            characterId: 'josef-hooper',
+            team: 'NEUTRAL',
+            mightIndex: 0,
+            speedIndex: 0,
+            sanityIndex: 0,
+            knowledgeIndex: 0,
         }
     }
 
-    get isMightCritical() {
-        return this.mightIndex === 1
-    }
+    const character = getCharacterById(params.characterId)
 
-    get isSpeedCritical() {
-        return this.speedIndex === 1
-    }
-
-    get isSanityCritical() {
-        return this.sanityIndex === 1
-    }
-
-    get isKnowledgeCritical() {
-        return this.knowledgeIndex === 1
-    }
-
-    get isDead() {
-        return this.mightIndex === 0 || this.sanityIndex === 0 || this.speedIndex === 0 || this.knowledgeIndex === 0
+    return {
+        id: params.id,
+        characterId: params.characterId,
+        team: 'NEUTRAL',
+        mightIndex: character.startingMightIndex,
+        speedIndex: character.startingSpeedIndex,
+        sanityIndex: character.startingSanityIndex,
+        knowledgeIndex: character.startingKnowledgeIndex,
     }
 }
 
-const clampTraitScaleIndex = (index: number) => {
-    return Math.min(Math.max(index, 0), 8)
+export const getPlayerCharacter = (player: Player) => getCharacterById(player.characterId)
+
+export const getPlayerMight = (player: Player) => getPlayerCharacter(player).mightScale[player.mightIndex]
+export const getPlayerSpeed = (player: Player) => getPlayerCharacter(player).speedScale[player.speedIndex]
+export const getPlayerSanity = (player: Player) => getPlayerCharacter(player).sanityScale[player.sanityIndex]
+export const getPlayerKnowledge = (player: Player) => getPlayerCharacter(player).knowledgeScale[player.knowledgeIndex]
+
+export const updatePlayerTraits = (
+    player: Player,
+    { mightDelta, speedDelta, sanityDelta, knowledgeDelta }: Partial<{
+        mightDelta: number | undefined
+        speedDelta: number | undefined
+        sanityDelta: number | undefined
+        knowledgeDelta: number | undefined
+    }>
+) => {
+    if (mightDelta !== undefined) player.mightIndex += boundTraitScaleIndex(mightDelta)
+    if (speedDelta !== undefined) player.speedIndex += boundTraitScaleIndex(speedDelta)
+    if (sanityDelta !== undefined) player.sanityIndex += boundTraitScaleIndex(sanityDelta)
+    if (knowledgeDelta !== undefined) player.knowledgeIndex += boundTraitScaleIndex(knowledgeDelta)
+    return player
 }
 
-export type PlayerTeam = 'NEUTRAL' | 'SURVIVOR' | 'TRAITOR';
+export const isMightCritical = (player: Player) => player.mightIndex === 1
+export const isSpeedCritical = (player: Player) => player.speedIndex === 1
+export const isSanityCritical = (player: Player) => player.sanityIndex === 1
+export const isKnowledgeCritical = (player: Player) => player.knowledgeIndex === 1
+
+export const isDead = (player: Player) =>
+    player.mightIndex === 0 || player.sanityIndex === 0 || player.speedIndex === 0 || player.knowledgeIndex === 0
+
+export type PlayerTeam = 'NEUTRAL' | 'SURVIVOR' | 'TRAITOR'
