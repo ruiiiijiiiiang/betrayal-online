@@ -2,55 +2,28 @@ export type RoomTileDirection = 'UP' | 'RIGHT' | 'DOWN' | 'LEFT';
 export type RoomTileRotation = 0 | 90 | 180 | 270;
 export type RoomTileInducedCardType = 'OMEN' | 'EVENT' | 'ITEM';
 
-export class House {
-    groundFloor: Region;
-    upperFloor: Region;
-    basement: Region;
-
-    constructor(groundFloor: Region, upperFloor: Region, basement: Region) {
-        this.groundFloor = groundFloor;
-        this.upperFloor = upperFloor;
-        this.basement = basement;
-    }
+export interface House {
+    groundFloor: Region
+    upperFloor: Region
+    basement: Region
 }
 
-export class Region {
-    id: string;
-    name: string;
-    tiles: PlacedRoomTile[];
-
-    constructor(id: string, name: string, tiles: PlacedRoomTile[]) {
-        this.id = id;
-        this.name = name;
-        this.tiles = tiles;
-    }
+export interface Region {
+    id: string
+    name: string
+    tiles: PlacedRoomTile[]
 }
 
-export class RoomTile {
-    id: string;
-    name: string;
-    validRegions: Region[];
-    doorways: RoomTileDirection[];
-    symbols: RoomTileInducedCardType[];
-
-    constructor(id: string, name: string, validRegions: Region[], doorways: RoomTileDirection[], symbols: RoomTileInducedCardType[]) {
-        this.id = id;
-        this.name = name;
-        this.validRegions = validRegions;
-        this.doorways = doorways;
-        this.symbols = symbols;
-    }
+export interface RoomTile {
+    id: string
+    name: string
+    validRegions: Region[]
+    doorways: RoomTileDirection[]
+    symbols: RoomTileInducedCardType[]
 }
 
-export class PlacedRoomTile extends RoomTile {
-    rotation: RoomTileRotation;
-    x: number;
-    y: number;
-
-    constructor(roomTile: RoomTile, rotation: RoomTileRotation, x: number, y: number) {
-        super(roomTile.id, roomTile.name, roomTile.validRegions, roomTile.doorways, roomTile.symbols);
-        this.rotation = rotation;
-        this.x = x;
-        this.y = y;
-    }
+export interface PlacedRoomTile extends RoomTile {
+    rotation: RoomTileRotation
+    x: number
+    y: number
 }
